@@ -8,6 +8,7 @@ import com.yash.serviceprovider.entity.Registration;
 import com.yash.serviceprovider.entity.ServiceProvider;
 import com.yash.serviceprovider.entity.UserServices;
 import com.yash.serviceprovider.pojo.Login;
+import com.yash.serviceprovider.pojo.ServiceProviderPojo;
 
 public interface ServiceProviderService {
 
@@ -23,7 +24,7 @@ public interface ServiceProviderService {
 
 	List<ServiceProvider> getServiceProviders();
 
-	List<Categories> getServiceProvidersCategories(ServiceProvider serviceProvider);
+	List<Categories> getServiceProvidersCategories(ServiceProviderPojo serviceProvider);
 
 	List<Address> getAddress();
 

@@ -1,6 +1,7 @@
 package com.yash.serviceprovider.serviceimpl;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.yash.serviceprovider.dao.AddressDao;
 import com.yash.serviceprovider.dao.CategoriesDao;
@@ -12,6 +13,7 @@ import com.yash.serviceprovider.entity.Categories;
 import com.yash.serviceprovider.entity.Registration;
 import com.yash.serviceprovider.entity.ServiceProvider;
 import com.yash.serviceprovider.entity.UserServices;
+import com.yash.serviceprovider.pojo.ServiceProviderPojo;
 import com.yash.serviceprovider.service.ServiceProviderService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,8 +69,8 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	}
 
 	@Override
-	public List<Categories> getServiceProvidersCategories(ServiceProvider serviceProvider) {
-		return categoriesDao.findByFkcategories(serviceProvider);
+	public List<Categories> getServiceProvidersCategories(ServiceProviderPojo serviceProvider) {
+		return categoriesDao.findAllByServiceProviderAndAddress(serviceProvider.getSid(), serviceProvider.getAid());
 	}
 
 	@Override
@@ -86,5 +88,4 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 		return userServicesDao.findAll();
 	}
 
-	
 }

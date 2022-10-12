@@ -11,9 +11,8 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class Login {
+public class ServiceProviderPojo {
 
-	private String emailid;
-	private String password;
-
+	private int sid;
+	private int aid;
 }

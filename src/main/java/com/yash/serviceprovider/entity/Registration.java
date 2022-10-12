@@ -35,6 +35,7 @@ public class Registration {
 	private String emailid;
 	private String password;
 	private String confirmpassword;
+	private String usertype;
 	
 	@OneToMany(mappedBy = "fkregistrationid")
 	@JsonIgnore

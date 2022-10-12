@@ -21,7 +21,6 @@ import lombok.ToString;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 @Entity
 @Getter
 @Setter
@@ -45,6 +44,8 @@ public class Categories {
 	@JoinColumn(name = "aid", nullable = false)
 	@JsonIgnore
 	private Address fkaid;
+	
+	private int price;
 
 	public Categories(String categoryname, ServiceProvider fkcategories, Address fkaid) {
 		super();

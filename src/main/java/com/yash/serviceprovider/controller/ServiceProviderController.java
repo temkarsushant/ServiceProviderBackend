@@ -8,9 +8,11 @@ import com.yash.serviceprovider.entity.Registration;
 import com.yash.serviceprovider.entity.ServiceProvider;
 import com.yash.serviceprovider.entity.UserServices;
 import com.yash.serviceprovider.pojo.Login;
+import com.yash.serviceprovider.pojo.ServiceProviderPojo;
 import com.yash.serviceprovider.service.ServiceProviderService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@CrossOrigin("http://localhost:3000")
 public class ServiceProviderController {
 
 	@Autowired
@@ -26,6 +29,7 @@ public class ServiceProviderController {
 	@PostMapping("/registration")
 	public String regerstrationService(@RequestBody() Registration registration) {
 		String respnose = null;
+		System.out.println(registration);
 		if (registration.getPassword().equals(registration.getConfirmpassword())) {
 			Registration rdata = serviceProviderService.save(registration);
 			respnose = "User Registration Succesful";
@@ -36,10 +40,11 @@ public class ServiceProviderController {
 		return respnose;
 	}
 
-	@GetMapping("/login")
+	@PostMapping("/login")
 	public Registration loginService(@RequestBody() Login login) {
 		String response = null;
-		Registration rdata = serviceProviderService.getLoginDetails(login.getEmailId());
+		System.out.println("In login" + login);
+		Registration rdata = serviceProviderService.getLoginDetails(login.getEmailid());
 		System.out.println(rdata);
 		if (rdata != null) {
 			if (rdata.getPassword().equals(login.getPassword())) {
@@ -116,12 +121,13 @@ public class ServiceProviderController {
 	}
 
 	// Address also should be come in this methods request
-	@GetMapping("/getServiceProvidersCategories")
-	public List<Categories> getServiceProvidersCategories(@RequestBody() ServiceProvider serviceProvider) {
+	@PostMapping("/getServiceProvidersCategories")
+	public List<Categories> getServiceProvidersCategories(@RequestBody() ServiceProviderPojo serviceProvider) {
 		String response = null;
+		System.out.println(serviceProvider);
 		List<Categories> serviceProviderCategoryResp = serviceProviderService
 				.getServiceProvidersCategories(serviceProvider);
-		// System.out.println(serviceProviderResp);
+	//	System.out.println(serviceProviderCategoryResp);
 //		if (serviceProviderResp != null) {
 //			return serviceProviderResp;
 //		}
