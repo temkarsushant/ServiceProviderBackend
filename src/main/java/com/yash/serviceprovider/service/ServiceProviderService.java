@@ -32,4 +32,12 @@ public interface ServiceProviderService {
 
 	List<UserServices> getUserServices();
 
+	UserServices save(int rid, int cid, String reviews, String userrequest, Boolean isPayment);
+
+	UserServices delete(int rid, int cid, String reviews, String userrequest, Boolean isPayment);
+
+	String getUserServicesById(int rid);
+
+	String serUserpayment(int rid, Boolean boolean1);
+
 }

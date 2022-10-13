@@ -16,4 +16,7 @@ public interface CategoriesDao extends JpaRepository<Categories, Integer> {
 	@Query("FROM Categories g where g.fkaid.aid=:aid and g.fkcategories.sid = :sid ")
 	List<Categories> findAllByServiceProviderAndAddress(@Param("sid") int sid, @Param("aid") int aid);
 
+	@Query("FROM Categories g where cid=:cid")
+	Categories findByFkCategoryId(@Param("cid") int id);
+
 }

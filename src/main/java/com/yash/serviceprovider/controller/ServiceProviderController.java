@@ -9,13 +9,13 @@ import com.yash.serviceprovider.entity.ServiceProvider;
 import com.yash.serviceprovider.entity.UserServices;
 import com.yash.serviceprovider.pojo.Login;
 import com.yash.serviceprovider.pojo.ServiceProviderPojo;
+import com.yash.serviceprovider.pojo.UserServicePojo;
 import com.yash.serviceprovider.service.ServiceProviderService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -127,7 +127,7 @@ public class ServiceProviderController {
 		System.out.println(serviceProvider);
 		List<Categories> serviceProviderCategoryResp = serviceProviderService
 				.getServiceProvidersCategories(serviceProvider);
-	//	System.out.println(serviceProviderCategoryResp);
+		// System.out.println(serviceProviderCategoryResp);
 //		if (serviceProviderResp != null) {
 //			return serviceProviderResp;
 //		}
@@ -148,15 +148,32 @@ public class ServiceProviderController {
 	}
 
 	@PostMapping("/saveUserService")
-	public String saveUserService(@RequestBody() UserServices userServices) {
+	public String saveUserService(@RequestBody() UserServicePojo userServices) {
 		String respnose = null;
 		System.out.println(userServices);
-		UserServices userServicesResp = serviceProviderService.save(userServices);
+
+		UserServices userServicesResp = serviceProviderService.save(userServices.getRid(), userServices.getCid(),
+				userServices.getReviews(), userServices.getUserrequest(), userServices.getIsPayment());
 		if (userServicesResp != null) {
 			respnose = userServicesResp.getUid() + "";
 		} else {
-			respnose = "Failed to add User service, Please try again.";
+			respnose = "Failed to add service, Please try again.";
 		}
+		return respnose;
+	}
+
+	@PostMapping("/deleteuserservice")
+	public String deleteUserService(@RequestBody() UserServicePojo userServices) {
+		String respnose = null;
+		System.out.println("In deltete:" + userServices);
+
+		UserServices userServicesResp = serviceProviderService.delete(userServices.getRid(), userServices.getCid(),
+				userServices.getReviews(), userServices.getUserrequest(), userServices.getIsPayment());
+//		if (userServicesResp != null) {
+//			respnose = userServicesResp.getUid() + "";
+//		} else {
+		respnose = "Record Removed Succesfully.";
+//		}
 		return respnose;
 	}
 
@@ -171,5 +188,31 @@ public class ServiceProviderController {
 		return userServicesResp;
 
 	}
+	
+	@PostMapping("/getUserServicesbyid")
+	public String getUserServiceById(@RequestBody UserServicePojo userServicePojo) {
+		String response = null;
+		String userServicesResp = serviceProviderService.getUserServicesById(userServicePojo.getRid());
+		// System.out.println(serviceProviderResp);
+//		if (serviceProviderResp != null) {
+//			return serviceProviderResp;
+//		}
+		return userServicesResp;
+
+	}
+	
+	@PostMapping("/serUserpayment")
+	public String serUserpayment(@RequestBody UserServicePojo userServicePojo) {
+		String response = null;
+		System.out.println(userServicePojo);
+		String userServicesResp = serviceProviderService.serUserpayment(userServicePojo.getRid(),userServicePojo.getIsPayment());
+		// System.out.println(serviceProviderResp);
+//		if (serviceProviderResp != null) {
+//			return serviceProviderResp;
+//		}
+		return null;
+
+	}
+	
 
 }
