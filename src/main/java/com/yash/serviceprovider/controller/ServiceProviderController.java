@@ -8,6 +8,7 @@ import com.yash.serviceprovider.entity.Registration;
 import com.yash.serviceprovider.entity.ServiceProvider;
 import com.yash.serviceprovider.entity.UserServices;
 import com.yash.serviceprovider.pojo.Login;
+import com.yash.serviceprovider.pojo.RegisterServiceProviderPojo;
 import com.yash.serviceprovider.pojo.ServiceProviderPojo;
 import com.yash.serviceprovider.pojo.UserServicePojo;
 import com.yash.serviceprovider.service.ServiceProviderService;
@@ -48,29 +49,49 @@ public class ServiceProviderController {
 		System.out.println(rdata);
 		if (rdata != null) {
 			if (rdata.getPassword().equals(login.getPassword())) {
-				response = "Login Succsuful";
+				System.out.println("in password");
+				return rdata;
 			} else {
 				response = "Password does not match";
 			}
 		} else {
 			response = "Email Id Does not exist";
 		}
-		return rdata;
+		return null;
+	}
+	
+	@PostMapping("/adminlogin")
+	public Registration adminLoginService(@RequestBody() Login login) {
+		String response = null;
+		System.out.println("In login" + login);
+		Registration rdata = serviceProviderService.getLoginDetails(login.getEmailid());
+		System.out.println(rdata);
+		if (rdata != null) {
+			if (rdata.getPassword().equals(login.getPassword()) && rdata.getUsertype().equals("Admin")) {
+				System.out.println("in password"+rdata.getUsertype());
+				return rdata;
+			} else {
+				response = "Password does not match";
+			}
+		} else {
+			response = "Email Id Does not exist";
+		}
+		return null;
 	}
 
 	@PostMapping("/registerserviceprovider")
-	public String registerServiceProvider(@RequestBody() ServiceProvider serviceProvider) {
+	public String registerServiceProvider(@RequestBody() RegisterServiceProviderPojo serviceProvider) {
 		String respnose = null;
 //		Registration rr = new Registration();
 //		rr.setRid(1);
 //		serviceProvider.setFkregistrationid(rr);
 		System.out.println(serviceProvider);
-		ServiceProvider serviceProviderRes = serviceProviderService.save(serviceProvider);
-		if (serviceProviderRes != null) {
-			respnose = serviceProviderRes.getSid() + "";
-		} else {
-			respnose = "Failed to add service provider, Please try again.";
-		}
+	//	ServiceProvider serviceProviderRes = serviceProviderService.save(serviceProvider);
+//		if (serviceProviderRes != null) {
+//			respnose = serviceProviderRes.getSid() + "";
+//		} else {
+//			respnose = "Failed to add service provider, Please try again.";
+//		}
 		return respnose;
 	}
 
