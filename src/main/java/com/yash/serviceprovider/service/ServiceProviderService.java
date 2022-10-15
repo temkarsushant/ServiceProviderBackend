@@ -8,6 +8,7 @@ import com.yash.serviceprovider.entity.Registration;
 import com.yash.serviceprovider.entity.ServiceProvider;
 import com.yash.serviceprovider.entity.UserServices;
 import com.yash.serviceprovider.pojo.Login;
+import com.yash.serviceprovider.pojo.RegisterServiceProviderPojo;
 import com.yash.serviceprovider.pojo.ServiceProviderPojo;
 
 public interface ServiceProviderService {
@@ -39,5 +40,11 @@ public interface ServiceProviderService {
 	String getUserServicesById(int rid);
 
 	String serUserpayment(int rid, Boolean boolean1);
+
+	ServiceProvider save(RegisterServiceProviderPojo serviceProvider);
+
+	UserServices update(String ruid);
+
+	UserServices rejectUserService(String replace);
 
 }

@@ -21,4 +21,7 @@ public interface UserServicesDao extends JpaRepository<UserServices, Integer> {
 	@Query("UPDATE UserServices g set g.isPayment=:isPayment where g.fkregistrationuserid.rid=:rid and g.isPayment=false ")
 	void save(@Param("rid") int rid,@Param("isPayment") Boolean isPayment);
 
+	@Query("FROM UserServices g where g.userrequest=:userrequest and g.isPayment=true")
+	List<UserServices> find(@Param("userrequest") String userrequest);
+
 }

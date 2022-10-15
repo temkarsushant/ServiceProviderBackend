@@ -1,5 +1,6 @@
 package com.yash.serviceprovider.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.yash.serviceprovider.entity.Address;
@@ -8,6 +9,7 @@ import com.yash.serviceprovider.entity.Registration;
 import com.yash.serviceprovider.entity.ServiceProvider;
 import com.yash.serviceprovider.entity.UserServices;
 import com.yash.serviceprovider.pojo.Login;
+import com.yash.serviceprovider.pojo.PendingUserServices;
 import com.yash.serviceprovider.pojo.RegisterServiceProviderPojo;
 import com.yash.serviceprovider.pojo.ServiceProviderPojo;
 import com.yash.serviceprovider.pojo.UserServicePojo;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -59,7 +62,7 @@ public class ServiceProviderController {
 		}
 		return null;
 	}
-	
+
 	@PostMapping("/adminlogin")
 	public Registration adminLoginService(@RequestBody() Login login) {
 		String response = null;
@@ -68,7 +71,7 @@ public class ServiceProviderController {
 		System.out.println(rdata);
 		if (rdata != null) {
 			if (rdata.getPassword().equals(login.getPassword()) && rdata.getUsertype().equals("Admin")) {
-				System.out.println("in password"+rdata.getUsertype());
+				System.out.println("in password" + rdata.getUsertype());
 				return rdata;
 			} else {
 				response = "Password does not match";
@@ -86,12 +89,12 @@ public class ServiceProviderController {
 //		rr.setRid(1);
 //		serviceProvider.setFkregistrationid(rr);
 		System.out.println(serviceProvider);
-	//	ServiceProvider serviceProviderRes = serviceProviderService.save(serviceProvider);
-//		if (serviceProviderRes != null) {
-//			respnose = serviceProviderRes.getSid() + "";
-//		} else {
-//			respnose = "Failed to add service provider, Please try again.";
-//		}
+		ServiceProvider serviceProviderRes = serviceProviderService.save(serviceProvider);
+		if (serviceProviderRes != null) {
+			respnose = serviceProviderRes.getSid() + "";
+		} else {
+			respnose = "Failed to add service provider, Please try again.";
+		}
 		return respnose;
 	}
 
@@ -199,17 +202,32 @@ public class ServiceProviderController {
 	}
 
 	@GetMapping("/getUserServices")
-	public List<UserServices> getUserServices() {
+	public List<PendingUserServices> getUserServices() {
 		String response = null;
+		System.out.println("In user services");
 		List<UserServices> userServicesResp = serviceProviderService.getUserServices();
-		// System.out.println(serviceProviderResp);
+		List<PendingUserServices> pusl = new ArrayList<>();
+
+		for (UserServices us : userServicesResp) {
+			PendingUserServices pus = new PendingUserServices();
+			pus.setUsid(us.getUid());
+			pus.setEmialid(us.getFkregistrationuserid().getEmailid());
+			pus.setFirstname(us.getFkregistrationuserid().getFirstname());
+			pus.setLastname(us.getFkregistrationuserid().getLastname());
+			pus.setIspayment(us.getIsPayment().toString());
+			pus.setMobileno(us.getFkregistrationuserid().getMobileno());
+			pus.setUserrequest(us.getUserrequest());
+			pusl.add(pus);
+		}
+
+		System.out.println(userServicesResp);
 //		if (serviceProviderResp != null) {
 //			return serviceProviderResp;
 //		}
-		return userServicesResp;
+		return pusl;
 
 	}
-	
+
 	@PostMapping("/getUserServicesbyid")
 	public String getUserServiceById(@RequestBody UserServicePojo userServicePojo) {
 		String response = null;
@@ -221,12 +239,13 @@ public class ServiceProviderController {
 		return userServicesResp;
 
 	}
-	
+
 	@PostMapping("/serUserpayment")
 	public String serUserpayment(@RequestBody UserServicePojo userServicePojo) {
 		String response = null;
 		System.out.println(userServicePojo);
-		String userServicesResp = serviceProviderService.serUserpayment(userServicePojo.getRid(),userServicePojo.getIsPayment());
+		String userServicesResp = serviceProviderService.serUserpayment(userServicePojo.getRid(),
+				userServicePojo.getIsPayment());
 		// System.out.println(serviceProviderResp);
 //		if (serviceProviderResp != null) {
 //			return serviceProviderResp;
@@ -234,6 +253,38 @@ public class ServiceProviderController {
 		return null;
 
 	}
-	
 
+	@PostMapping("/updateuserservice")
+	public String updateUserService(@RequestBody String ruid) {
+		String respnose = null;
+		System.out.println("In deltete:" + ruid);
+
+		UserServices userServicesResp = serviceProviderService.update(ruid.replace("=",""));
+		if (userServicesResp != null) {
+			respnose = userServicesResp.getUid() + "";
+		} else {
+			respnose = "Record Removed Succesfully.";
+//		}
+			
+		}
+		return respnose;
+	}
+
+	@PostMapping("/rejectuserservice")
+	public String rejectUserService(@RequestBody String ruid) {
+		String respnose = null;
+		System.out.println("In deltete:" + ruid);
+
+		UserServices userServicesResp = serviceProviderService.rejectUserService(ruid.replace("=",""));
+		if (userServicesResp != null) {
+			respnose = userServicesResp.getUid() + "";
+		} else {
+			respnose = "Record Removed Succesfully.";
+//		}
+			
+		}
+		return respnose;
+	}
+
+	
 }
