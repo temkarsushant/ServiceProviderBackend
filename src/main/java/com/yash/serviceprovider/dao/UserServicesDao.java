@@ -2,6 +2,7 @@ package com.yash.serviceprovider.dao;
 
 import java.util.List;
 
+import com.yash.serviceprovider.entity.Registration;
 import com.yash.serviceprovider.entity.UserServices;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,5 +24,8 @@ public interface UserServicesDao extends JpaRepository<UserServices, Integer> {
 
 	@Query("FROM UserServices g where g.userrequest=:userrequest and g.isPayment=true")
 	List<UserServices> find(@Param("userrequest") String userrequest);
+
+	@Query("FROM UserServices g where g.fkregistrationuserid.rid=:rid and g.userrequest=:userrequest and g.isPayment=true ")
+	List<UserServices> findByUserPayment(@Param("rid") int rid,@Param("userrequest") String userrequest);
 
 }

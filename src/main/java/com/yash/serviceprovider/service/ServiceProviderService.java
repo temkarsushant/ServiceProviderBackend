@@ -4,9 +4,13 @@ import java.util.List;
 
 import com.yash.serviceprovider.entity.Address;
 import com.yash.serviceprovider.entity.Categories;
+import com.yash.serviceprovider.entity.Feedback;
 import com.yash.serviceprovider.entity.Registration;
 import com.yash.serviceprovider.entity.ServiceProvider;
 import com.yash.serviceprovider.entity.UserServices;
+import com.yash.serviceprovider.pojo.ConfirmPassword;
+import com.yash.serviceprovider.pojo.FeedbackPojo;
+import com.yash.serviceprovider.pojo.GetUserServicePojo;
 import com.yash.serviceprovider.pojo.Login;
 import com.yash.serviceprovider.pojo.RegisterServiceProviderPojo;
 import com.yash.serviceprovider.pojo.ServiceProviderPojo;
@@ -46,5 +50,13 @@ public interface ServiceProviderService {
 	UserServices update(String ruid);
 
 	UserServices rejectUserService(String replace);
+
+	Registration confirmPassword(ConfirmPassword confirmpassword) throws Exception;
+
+	Feedback saveFeedback(FeedbackPojo feedback);
+
+	Registration getUserByEmail(String emailid);
+
+	List<GetUserServicePojo> findAllUseServices(String registrationid);
 
 }

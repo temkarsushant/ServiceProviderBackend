@@ -13,7 +13,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface CategoriesDao extends JpaRepository<Categories, Integer> {
 
-	@Query("FROM Categories g where g.fkaid.aid=:aid and g.fkcategories.sid = :sid ")
+	@Query("FROM Categories g where g.fkaid.aid=:aid and g.fkcategories.sid = :sid ORDER BY g.price DESC")
 	List<Categories> findAllByServiceProviderAndAddress(@Param("sid") int sid, @Param("aid") int aid);
 
 	@Query("FROM Categories g where cid=:cid")

@@ -1,5 +1,7 @@
 package com.yash.serviceprovider.dao;
 
+import java.util.Optional;
+
 import com.yash.serviceprovider.entity.Registration;
 import com.yash.serviceprovider.pojo.Login;
 
@@ -12,5 +14,7 @@ public interface RegistrationDao extends JpaRepository<Registration, Integer> {
 	public Registration save(Registration registration);
 
 	public Registration getByEmailid(String emailid);
+
+
 	
 }

@@ -2,25 +2,30 @@ package com.yash.serviceprovider.serviceimpl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import javax.transaction.Transactional;
 
 import com.yash.serviceprovider.dao.AddressDao;
 import com.yash.serviceprovider.dao.CategoriesDao;
+import com.yash.serviceprovider.dao.FeedbackDao;
 import com.yash.serviceprovider.dao.RegistrationDao;
 import com.yash.serviceprovider.dao.ServiceProviderDao;
 import com.yash.serviceprovider.dao.UserServicesDao;
 import com.yash.serviceprovider.entity.Address;
 import com.yash.serviceprovider.entity.Categories;
+import com.yash.serviceprovider.entity.Feedback;
 import com.yash.serviceprovider.entity.Registration;
 import com.yash.serviceprovider.entity.ServiceProvider;
 import com.yash.serviceprovider.entity.UserServices;
+import com.yash.serviceprovider.pojo.ConfirmPassword;
+import com.yash.serviceprovider.pojo.FeedbackPojo;
+import com.yash.serviceprovider.pojo.GetUserServicePojo;
 import com.yash.serviceprovider.pojo.RegisterServiceProviderPojo;
 import com.yash.serviceprovider.pojo.ServiceProviderPojo;
 import com.yash.serviceprovider.service.ServiceProviderService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -40,6 +45,9 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 
 	@Autowired
 	UserServicesDao userServicesDao;
+
+	@Autowired
+	FeedbackDao feedbackDao;
 
 	@Override
 	public Registration save(Registration rr) {
@@ -152,10 +160,15 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 
 		Registration rr = registrationDao.findById(41).orElse(null);
 
+		ServiceProvider old = serviceProviderDao.findByName(serviceProvider.getSname());
+
 		ServiceProvider sp = new ServiceProvider();
-		sp.setSname(serviceProvider.getSname());
-		sp.setFkregistrationid(rr);
-		ServiceProvider spNew = serviceProviderDao.save(sp);
+		if (old == null) {
+			sp.setSname(serviceProvider.getSname());
+			sp.setFkregistrationid(rr);
+			old = serviceProviderDao.save(sp);
+		}
+
 		Address adExisting = addressDao.findByCity(serviceProvider.getCity());
 		if (adExisting == null) {
 			Address ad = new Address();
@@ -166,11 +179,11 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 		Categories ct = new Categories();
 		ct.setCategoryname(serviceProvider.getCategoryname());
 		ct.setFkaid(adExisting);
-		ct.setFkcategories(spNew);
+		ct.setFkcategories(old);
 		ct.setPrice(Integer.parseInt(serviceProvider.getPrice()));
 
 		categoriesDao.save(ct);
-		return spNew;
+		return old;
 	}
 
 	@Override
@@ -180,13 +193,66 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 		userServicesDao.save(us);
 		return us;
 	}
-	
+
 	@Override
 	public UserServices rejectUserService(String ruid) {
 		UserServices us = userServicesDao.findById(Integer.parseInt(ruid)).orElse(null);
 		us.setUserrequest("Rejected");
 		userServicesDao.save(us);
 		return us;
+	}
+
+	@Override
+	public Registration confirmPassword(ConfirmPassword confirmpassword) throws Exception {
+		Registration rr = registrationDao.getByEmailid(confirmpassword.getEmailid());
+		if (rr != null) {
+			rr.setPassword(confirmpassword.getPassword());
+			rr.setConfirmpassword(confirmpassword.getConfirmnewpassword());
+			registrationDao.save(rr);
+		} else {
+			throw new Exception("User Not Found");
+		}
+		return rr;
+	}
+
+	@Override
+	public Feedback saveFeedback(FeedbackPojo feedback) {
+		Feedback fb = new Feedback();
+		fb.setEmailid(feedback.getEmailid());
+		fb.setFeedback(feedback.getFeedback());
+		fb.setFirstname(feedback.getFirstname());
+		fb.setLastname(feedback.getLastname());
+		fb.setMobileno(feedback.getMobileno());
+		return feedbackDao.save(fb);
+	}
+
+	@Override
+	public Registration getUserByEmail(String emailid) {
+		return registrationDao.getByEmailid(emailid);
+	}
+
+	@Override
+	public List<GetUserServicePojo> findAllUseServices(String registrationid) {
+
+		List<GetUserServicePojo> ll = new ArrayList<>();
+
+
+		List<UserServices> uslist = userServicesDao.findByUserPayment(Integer.parseInt(registrationid), "Approved");
+
+		for (UserServices uus : uslist) {
+			Categories ct = categoriesDao.findById(uus.getFkcategoryid().getCid()).orElse(null);
+			if (ct != null) {
+				ServiceProvider sp = serviceProviderDao.findById(ct.getFkcategories().getSid()).orElse(null);
+				if (sp != null ) {
+					GetUserServicePojo gusp = new GetUserServicePojo();
+					gusp.setCategoryname(ct.getCategoryname());
+					gusp.setSname(sp.getSname());
+					gusp.setPrice(ct.getPrice());
+					ll.add(gusp);
+				}
+			}
+		}
+		return ll;
 	}
 
 }
